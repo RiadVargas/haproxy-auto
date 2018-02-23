@@ -23,9 +23,9 @@ docker run -e VIRTUAL_HOST=foo.bar.com  ...
 
 Or if you to enable SSL for this domain use:
 ```console
-docker run -e VIRTUAL_HOST=foo.bar.com  -e SSL_FILE=filename.pem ...
+docker run -e VIRTUAL_HOST=foo.bar.com  -e SSL_FILE=filename ...
 ```
-Remember to use a bundled certificate.
+Remember to use a bundled certificate. It presumes the certificate extension is `pem`.
 
 
 #### TODO
