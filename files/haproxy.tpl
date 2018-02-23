@@ -70,23 +70,25 @@ frontend http_in
 {{ end }}
 
 # Frontend for HTTPS (port: 443)
+{{ if (groupByKeys $containers "Env.SSL_FILE") }}
 frontend https_in
-  bind *:443 ssl{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}{{ if (first (groupByKeys $containers "Env.SSL_FILE"))}} crt /etc/haproxy/certs/{{(first (groupByKeys $containers "Env.SSL_FILE"))}}.pem{{ end }}{{ end }}
+  bind *:443 ssl{{ range $ssl, $containers := groupByMulti $ "Env.SSL_FILE" "," }} crt /etc/haproxy/certs/{{ $ssl }}.pem{{ end }}
   mode http
   option forwardfor
   option http-server-close
   reqadd X-Forwarded-Proto:\ https
 
-{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
- {{ if (first (groupByKeys $containers "Env.SSL_FILE"))}}
-     acl {{ $host }} hdr(host) -i {{ $host }}
- {{ end }}
-{{ end }}
+  {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
+   {{ if (first (groupByKeys $containers "Env.SSL_FILE"))}}
+   acl {{ $host }} hdr(host) -i {{ $host }}
+   {{ end }}
+  {{ end }}
 
-{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
- {{ if (first (groupByKeys $containers "Env.SSL_FILE"))}}
-     use_backend {{ $host }} if {{ $host }}
- {{ end }}
+  {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
+   {{ if (first (groupByKeys $containers "Env.SSL_FILE"))}}
+   use_backend {{ $host }} if {{ $host }}
+   {{ end }}
+  {{ end }}
 {{ end }}
 
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
