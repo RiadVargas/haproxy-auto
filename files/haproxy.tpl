@@ -70,7 +70,6 @@ frontend http_in
 {{ end }}
 
 # Frontend for HTTPS (port: 443)
-{{ if (groupByKeys $containers "Env.SSL_FILE") }}
 frontend https_in
   bind *:443 ssl{{ range $ssl, $containers := groupByMulti $ "Env.SSL_FILE" "," }} crt /etc/haproxy/certs/{{ $ssl }}.pem{{ end }}
   mode http
@@ -89,7 +88,6 @@ frontend https_in
    use_backend {{ $host }} if {{ $host }}
    {{ end }}
   {{ end }}
-{{ end }}
 
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
 
