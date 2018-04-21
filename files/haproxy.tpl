@@ -54,7 +54,7 @@ frontend http_in
 
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
   {{ if (first (groupByKeys $containers "Env.WWW")) }}
-  redirect prefix http://www.{{ $host }} code 301 if { hdr(host) -i {{ $host }}
+  redirect prefix http://www.{{ $host }} code 301 if { hdr(host) -i {{ $host }} }
   {{ end }}
   {{ if (first (groupByKeys $containers "Env.WWW_BOTH")) }}
   acl www.{{ $host }} hdr(host) -i www.{{ $host }}
@@ -80,7 +80,7 @@ frontend https_in
   {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
    {{ if (first (groupByKeys $containers "Env.SSL_FILE"))}}
    {{ if (first (groupByKeys $containers "Env.WWW")) }}
-   redirect prefix https://www.{{ $host }} code 301 if { hdr(host) -i {{ $host }}
+   redirect prefix https://www.{{ $host }} code 301 if { hdr(host) -i {{ $host }} }
    {{ end }}
    {{ if (first (groupByKeys $containers "Env.WWW_BOTH")) }}
    acl www.{{ $host }} hdr(host) -i www.{{ $host }}
